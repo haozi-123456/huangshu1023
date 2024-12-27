@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>照片墙（黄舒）</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        #media-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #image-slider {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            transition: opacity 1s ease-out;
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        #video-player {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+
+        #next-button {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: purple;
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            border-radius: 5px;
+            opacity: 0.8;
+            transition: bottom 0.5s ease, opacity 0.5s ease;
+            cursor: pointer;
+            bottom: -100px;
+        }
+
+        #start-button {
+            background-color: #cabefa; /* 淡紫色背景 */
+            color: white;
+            border: none;
+            padding: 30px 60px; /* 按钮大小调整，使其更大 */
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 20px; /* 与下一个元素的间距 */
+        }
+
+        #instruction-text {
+            color: white;
+            margin-bottom: 20px; /* 与按钮的间距 */
+        }
+    </style>
+</head>
+<body>
+    <audio id="background-music" src="audio/huangshubeij.mp3"></audio>
+    <div id="media-container">
+        <img id="image-slider" src="" alt="Image Slider">
+        <video id="video-player" src="" controls></video>
+    </div>
+    <div id="instruction-text">
+        我相册里与你相关<br>
+          如若背景音乐不生效，请点击下方按钮或者点击屏幕，第一次制作网页请见谅
+    </div>
+    <button id="start-button">开始</button>
+    <button id="next-button">留言</button>
+    <button id="play-audio-btn">播放音乐</button>
+    <script>
+        // 存储图片路径的数组
+        const imagePaths = [];
+        for (let i = 1; i <= 28; i++) {
+            imagePaths.push(`images/image${i}.jpg`);
+        }
+        const videoPath = 'images/video.mp4';
+
+        let currentIndex = 0;
+        let imageSlider = document.getElementById('image-slider');
+        let videoPlayer = document.getElementById('video-player');
+        let nextButton = document.getElementById('next-button');
+        let audioPlayer = document.getElementById('background-music');
+        let playAudioBtn = document.getElementById('play-audio-btn');
+        let startButton = document.getElementById('start-button');
+        let instructionText = document.getElementById('instruction-text');
+        let intervalId;
+
+        // 初始化图片
+        function initImageSlider() {
+            imageSlider.src = imagePaths[currentIndex];
+            imageSlider.style.opacity = 1;
+            intervalId = setInterval(() => {
+                currentIndex = (currentIndex + 1) % imagePaths.length;
+                imageSlider.src = imagePaths[currentIndex];
+                imageSlider.style.opacity = 0;
+                setTimeout(() => {
+                    imageSlider.style.opacity = 1;
+                }, 500);
+            }, 1500);
+        }
+
+        // 开始播放视频
+        function startVideo() {
+            clearInterval(intervalId);
+            imageSlider.style.opacity = 0;
+            videoPlayer.src = videoPath;
+            videoPlayer.style.display = 'block';
+            videoPlayer.playbackRate = 1.0;
+            videoPlayer.play().catch(error => {
+                console.error('视频播放失败:', error);
+            });
+            videoPlayer.onended = showNextButton;
+        }
+
+        // 显示下一步按钮
+        function showNextButton() {
+            nextButton.style.bottom = '20px';
+            nextButton.style.opacity = 1;
+            nextButton.addEventListener('click', () => {
+                window.location.href = 'yemian3.html';
+            });
+        }
+
+        // 播放音频
+        function playAudio() {
+            if (audioPlayer.paused) {
+                audioPlayer.play().catch(error => {
+                    console.error('音频播放失败:', error);
+                });
+            }
+        }
+
+        // 页面加载完成后开始
+        window.onload = () => {
+            // 移除自动播放音频
+            // playAudio();
+        };
+
+        startButton.addEventListener('click', () => {
+            initImageSlider();
+            setTimeout(startVideo, imagePaths.length * 1500);
+            playAudio();
+            startButton.style.display = 'none'; // 点击后隐藏开始按钮
+            instructionText.style.display = 'none'; // 点击后隐藏说明文字
+        });
+
+        playAudioBtn.addEventListener('click', playAudio);
+
+        document.addEventListener('click', function() {
+            playAudio();
+        });
+    </script>
+</body>
+</html>

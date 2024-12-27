@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>留言（黄舒）</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            color: plum; /* 设置字体颜色为淡蓝色 */
+            font-family: Arial, sans-serif; /* 设置字体 */
+        }
+        #text-container {
+            white-space: pre-line; /* 保留文本中的换行符 */
+            max-width: 80%; /* 限制文本容器的最大宽度，可根据需要调整 */
+            overflow-y: auto; /* 当文本内容超出容器时添加滚动条 */
+        }
+        #play-button {
+            padding: 10px 20px;
+            background-color: rgba(126, 102, 128, 0.6); /* 紫色，透明度 20% */
+            color: snow; /* 字体为紫色 */
+            border: none; /* 无边框 */
+            border-radius: 5px;
+            cursor: pointer;
+            display: none; /* 初始隐藏播放按钮 */
+        }
+    </style>
+</head>
+<body>
+    <div id="text-container">
+        以下是对表达式 ++b - a + b-- 的计算分析，假设 a 、 b 事先都已经被声明并赋值了：
+
+        一、前置自增（ ++b ）
+
+        - 首先遇到 ++b ，这是前置自增运算符，会先将变量 b 的值加 1 ，然后使用自增后的新值参与后续运算。
+
+        二、进行减法运算（ - a ）
+
+        - 在 ++b 完成自增后，接着进行减法运算，用自增后的 b 值减去 a 的值。
+
+        三、加法运算（ + b-- ）
+
+        - 然后遇到 b-- ，这是后置自减运算符，它会先使用 b 当前的值参与运算（也就是经过前置自增后的那个值），等整个表达式运算完了，再将 b 的值减 1 。
+
+        例如，假设 a = 3 ， b = 5 ：
+
+        1. 先执行 ++b ，此时 b 的值变为 6 。
+        2. 接着执行 - a ，也就是 6 - 3 ，结果为 3 。
+        3. 然后执行 + b-- ，此时先使用 b 当前的值 6 参与加法运算，即 3 + 6 ，得到结果 9 ，然后整个表达式运算完了， b 的值再减 1 变为 5 。
+
+        所以最终表达式 ++b - a + b-- 的结果就是 9 。不过具体的计算结果会随 a 、 b 初始值的不同而变化。
+    </div>
+    <button id="play-button">播放录音</button>
+    <audio id="audio-player" src="audio/huangshuliuyan.m4a"></audio>
+    <script>
+        window.onload = function() {
+            const textContainer = document.getElementById('text-container');
+            const playButton = document.getElementById('play-button');
+            const audioPlayer = document.getElementById('audio-player');
+            let index = 0;
+            const text = textContainer.textContent;
+            textContainer.textContent = '';
+            const intervalId = setInterval(() => {
+                if (index < text.length) {
+                    textContainer.textContent += text[index];
+                    index++;
+                } else {
+                    clearInterval(intervalId);
+                    playButton.style.display = 'block'; // 显示播放按钮
+                }
+            }, 100); // 每 100 毫秒输出一个字符
+
+            playButton.addEventListener('click', () => {
+                audioPlayer.play(); // 点击播放按钮时播放音频
+            });
+        };
+    </script>
+</body>
+</html>
